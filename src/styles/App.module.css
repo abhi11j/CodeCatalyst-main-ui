@@ -1,0 +1,120 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #6a5acd;
+}
+
+.card {
+  background: #fff;
+  padding: 30px;
+  width: 1200px;
+  border-radius: 10px;
+}
+
+.title {
+  text-align: center;
+}
+
+.field {
+  margin-bottom: 15px;
+}
+
+.input {
+  width: 100%; /* Ensures full width within container */
+  box-sizing: border-box; /* Includes padding/border in width calculation */
+  padding: 8px; /* Consistent padding */
+  border: 1px solid #ccc; /* Consistent border */
+  border-radius: 4px; /* Optional for rounded corners */
+  font-size: 14px; /* Consistent font size */
+}
+
+.button {
+  width: 100%;
+  padding: 10px;
+  background: green;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+  border: 2px solid #333;
+}
+
+.th {
+  border: 1px solid #333;
+  padding: 8px;
+  background: #f0f0f0;
+}
+
+.td {
+  border: 1px solid #333;
+  padding: 8px;
+}
+
+.responseMessage {
+  margin-top: 10px;
+  color: green;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+  gap: 20px;
+}
+
+.tableContainer {
+  max-height: 600px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+}
+
+.implementButton {
+  width: 100%;
+  padding: 10px;
+  background: green;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  align-self: center;
+}
+
+.implementButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 2s linear infinite;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
