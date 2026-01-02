@@ -4,7 +4,7 @@ const useProjectSuggestions = () => {
   const [target, setTarget] = useState('');
   const [suggestionBy, setSuggestionBy] = useState('');
   const [tableData, setTableData] = useState([]);
-  const [responseMessage, setResponseMessage] = useState('');
+  const [responseMessage, setResponseMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [implementingRows, setImplementingRows] = useState([]);
@@ -39,7 +39,7 @@ const useProjectSuggestions = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/scan-repos', {
+      const response = await fetch(`${process.env.REACT_APP_SCAN_API_BASE_URL || 'http://localhost:5000'}/api/scan-repos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -54,7 +54,7 @@ const useProjectSuggestions = () => {
           source: s.source,
           priority: s.priority,
           detail: s.detail,
-          status: 'Pending',
+          status: 'Not Implemented',
         }));
 
         setTableData(rows);
@@ -88,7 +88,7 @@ const useProjectSuggestions = () => {
 
     try {
       const response = await fetch(
-        'http://100.79.233.254:5000/api/apply-suggestions',
+        `${process.env.REACT_APP_APPLY_API_BASE_URL || 'http://100.79.233.254:5000'}/api/apply-suggestions`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -100,12 +100,17 @@ const useProjectSuggestions = () => {
       const updatedData = [...tableData];
 
       if (result.success === true) {
-        const message = `${result.message || ''}`.trim(); // ${result.changed_files || ''}
-        updatedData[index].status = message;
-        setResponseMessage(message);
+        const message = `${result.result.message || ''}`.trim();
+        const pr_url = `${result.result.pr_url ? ` (PR: ${result.result.pr_url})` : ''}`;
+        updatedData[index].status = pr_url;
+        // setResponseMessage(pr_url);
+
+        console.log('PR link in Incoming Response Message:', result.result.pr_url)
+        // console.log('Response message set to:', message);
       } else {
         updatedData[index].status = 'Failed';
-        setResponseMessage('Implementation failed');
+        // setResponseMessage('Implementation failed');
+        console.log('Response message set to: Implementation failed');
       }
 
       setTableData(updatedData);
@@ -114,6 +119,7 @@ const useProjectSuggestions = () => {
       updatedData[index].status = 'Failed';
       setTableData(updatedData);
       setResponseMessage('Server error');
+      console.log('Response message set to: Server error');
     } finally {
       setImplementingRows(prev => prev.filter(i => i !== index));
     }
@@ -140,7 +146,7 @@ const useProjectSuggestions = () => {
 
     try {
       const response = await fetch(
-        'http://100.79.233.254:5000/api/apply-suggestions',
+        `${process.env.REACT_APP_APPLY_API_BASE_URL || 'http://100.79.233.254:5000'}/api/apply-suggestions`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -153,8 +159,10 @@ const useProjectSuggestions = () => {
 
       selectedRows.forEach(index => {
         if (result.success === true) {
-          const message = `${result.changed_files || ''} ${result.message || ''}`.trim();
-          updatedData[index].status = message;
+          // const message = `${result.result.changed_files ? result.result.changed_files.join(', ') : ''} ${result.result.message || ''}`.trim();
+          const pr_link = `${result.result.pr_url ? ` (PR: ${result.result.pr_url})` : ''}`;
+          {console.log('PR link in Incoming Response Message:', result.result.pr_url)}
+          updatedData[index].status = pr_link;
         } else {
           updatedData[index].status = 'Failed';
         }
@@ -162,8 +170,9 @@ const useProjectSuggestions = () => {
 
       setTableData(updatedData);
       setSelectedRows([]);
-      const message = result.success ? `${result.changed_files || ''} ${result.message || ''}`.trim() : 'Implementation failed';
+      const message = result.success ? `${result.result.message || ''} ': ' ${result.result.changed_files ? result.result.changed_files.map((item, index) => `${index + 1} ${item}`).join(", ") : ''}`.trim() : 'Implementation failed';
       setResponseMessage(message);
+      console.log('Bulk response message set to:', message);
     } catch {
       const updatedData = [...tableData];
       selectedRows.forEach(index => {
@@ -172,6 +181,7 @@ const useProjectSuggestions = () => {
       setTableData(updatedData);
       setSelectedRows([]);
       setResponseMessage('Server error');
+      console.log('Bulk response message set to: Server error');
     } finally {
       setBulkImplementing(false);
     }

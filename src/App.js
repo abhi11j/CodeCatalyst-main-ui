@@ -67,11 +67,13 @@ const App = () => {
             </button>
           )}
 
-          {responseMessage && (
+          {/* {console.log('responseMessage:', responseMessage)} */}
+
+          {/* {responseMessage && (
             <p className={styles.responseMessage}>
               {responseMessage}
             </p>
-          )}
+          )} */}
         </div>
       </div>
     </div>
